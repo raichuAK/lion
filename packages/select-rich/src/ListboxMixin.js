@@ -225,22 +225,22 @@ export const ListboxMixin = dedupeMixin(
             this.interactionMode = detectInteractionMode();
           }
         }
-        if (name === 'modelValue') {
-          this.dispatchEvent(new Event('model-value-changed', { bubbles: true }));
-        }
       }
 
       // eslint-disable-next-line class-methods-use-this
       _checkSingleChoiceElements() {}
 
-      updated(changedProps) {
-        super.updated(changedProps);
-        if (changedProps.has('disabled')) {
+      updated(changedProperties) {
+        super.updated(changedProperties);
+        if (changedProperties.has('disabled')) {
           if (this.disabled) {
             this.__requestOptionsToBeDisabled();
           } else {
             this.__retractRequestOptionsToBeDisabled();
           }
+        }
+        if (changedProperties.has('modelValue')) {
+          this.dispatchEvent(new Event('model-value-changed', { bubbles: true }));
         }
       }
 
@@ -288,6 +288,9 @@ export const ListboxMixin = dedupeMixin(
         this.__onChildCheckedChanged = this.__onChildCheckedChanged.bind(this);
 
         this._listboxNode.addEventListener('active-changed', this.__onChildActiveChanged);
+
+        this.removeEventListener('checked-changed', this.__onChildCheckedChanged);
+        // Readd the listener to _listboxNode, so it will still work whn placed in body
         this._listboxNode.addEventListener('checked-changed', this.__onChildCheckedChanged);
         this.addEventListener('keydown', this.__preventScrollingWithArrowKeys);
       }

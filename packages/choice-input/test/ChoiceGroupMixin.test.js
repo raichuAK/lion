@@ -35,8 +35,10 @@ describe('ChoiceGroupMixin', () => {
     await nextFrame();
     expect(el.modelValue).to.equal('female');
     el.formElements[0].checked = true;
+    await el.updateComplete;
     expect(el.modelValue).to.equal('male');
     el.formElements[2].checked = true;
+    await el.updateComplete;
     expect(el.modelValue).to.equal('other');
   });
 
@@ -129,6 +131,7 @@ describe('ChoiceGroupMixin', () => {
 
     expect(el.modelValue).to.equal(date);
     el.formElements[0].checked = true;
+    await el.updateComplete;
     expect(el.modelValue).to.deep.equal({ some: 'data' });
   });
 
@@ -143,6 +146,7 @@ describe('ChoiceGroupMixin', () => {
 
     expect(el.modelValue).to.equal(0);
     el.formElements[1].checked = true;
+    await el.updateComplete;
     expect(el.modelValue).to.equal('');
   });
 
@@ -182,20 +186,25 @@ describe('ChoiceGroupMixin', () => {
     counter = 0; // reset after setup which may result in different results
 
     el.formElements[0].checked = true;
+    await el.updateComplete;
     expect(counter).to.equal(2); // male becomes checked, female becomes unchecked
 
     // not changed values trigger no event
     el.formElements[0].checked = true;
+    await el.updateComplete;
     expect(counter).to.equal(2);
 
     el.formElements[2].checked = true;
+    await el.updateComplete;
     expect(counter).to.equal(4); // other becomes checked, male becomes unchecked
 
     // not found values trigger no event
     el.modelValue = 'foo';
+    await el.updateComplete;
     expect(counter).to.equal(4);
 
     el.modelValue = 'male';
+    await el.updateComplete;
     expect(counter).to.equal(6); // male becomes checked, other becomes unchecked
   });
 
@@ -213,11 +222,13 @@ describe('ChoiceGroupMixin', () => {
     expect(el.validationStates.error).to.have.a.property('Required');
 
     el.formElements[0].checked = true;
+    await el.updateComplete;
     expect(el.hasFeedbackFor).not.to.include('error');
     expect(el.validationStates).to.have.a.property('error');
     expect(el.validationStates.error).not.to.have.a.property('Required');
 
     el.formElements[1].checked = true;
+    await el.updateComplete;
     expect(el.hasFeedbackFor).not.to.include('error');
     expect(el.validationStates).to.have.a.property('error');
     expect(el.validationStates.error).not.to.have.a.property('Required');
@@ -231,6 +242,7 @@ describe('ChoiceGroupMixin', () => {
       </choice-group>
     `);
     el.formElements[0].checked = true;
+    await el.updateComplete;
     expect(el.serializedValue).to.deep.equal('male');
   });
 
@@ -258,8 +270,10 @@ describe('ChoiceGroupMixin', () => {
       await nextFrame();
       expect(el.modelValue).to.eql(['female']);
       el.formElements[0].checked = true;
+      await el.updateComplete;
       expect(el.modelValue).to.eql(['male', 'female']);
       el.formElements[2].checked = true;
+      await el.updateComplete;
       expect(el.modelValue).to.eql(['male', 'female', 'other']);
     });
 
@@ -305,7 +319,7 @@ describe('ChoiceGroupMixin', () => {
   });
 
   describe('Integration with a parent form/fieldset', () => {
-    it('will serialize all children with their serializedValue', async () => {
+    it.only('will serialize all children with their serializedValue', async () => {
       const el = await fixture(html`
         <lion-fieldset>
           <choice-group name="gender">
@@ -319,6 +333,8 @@ describe('ChoiceGroupMixin', () => {
       await nextFrame();
       await el.registrationReady;
       await el.updateComplete;
+      await el.updateComplete;
+
       expect(el.serializedValue).to.eql({
         gender: 'female',
       });

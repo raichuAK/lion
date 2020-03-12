@@ -76,8 +76,13 @@ export const ChoiceInputLightMixin = superclass =>
 
       if (name === 'checked') {
         this.__syncCheckedToInputElement();
-        this.dispatchEvent(new Event('checked-changed', { bubbles: true }));
+        // this.dispatchEvent(new Event('checked-changed', { bubbles: true }));
       }
+    }
+
+    updated(c) {
+      super.updated(c);
+      this.dispatchEvent(new Event('checked-changed', { bubbles: true }));
     }
 
     constructor() {

@@ -59,6 +59,7 @@ export const ChoiceInputMixin = superclass =>
         if (this.modelValue.checked !== this.checked) {
           this.__syncCheckedToModel(this.checked);
         }
+        console.log('checked _req');
       }
     }
 
@@ -71,10 +72,14 @@ export const ChoiceInputMixin = superclass =>
       }
     }
 
-    updated(c) {
-      super.updated(c);
-      if (c.has('modelValue')) {
+    updated(changedProperties) {
+      super.updated(changedProperties);
+      if (changedProperties.has('modelValue')) {
         this.__syncCheckedToInputElement();
+      }
+      if (changedProperties.has('checked')) {
+        console.log('checked updated');
+        this.dispatchEvent(new Event('checked-changed', { bubbles: true }));
       }
     }
 

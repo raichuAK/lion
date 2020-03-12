@@ -32,7 +32,7 @@ For usage and installation please see the appropriate packages.
     {() => {
       Required.getMessage = () => 'Please enter a value';
       return html`
-      <lion-form>
+      <lion-form @model-value-changed="${ev => console.log(ev.detail.formPath)}">
         <form>
           <lion-fieldset name="full_name">
             <lion-input

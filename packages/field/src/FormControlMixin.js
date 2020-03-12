@@ -151,12 +151,17 @@ export const FormControlMixin = dedupeMixin(
         this._inputId = uuid(this.localName);
         this._ariaLabelledNodes = [];
         this._ariaDescribedNodes = [];
+        this.addEventListener('model-value-changed', this.__repropagateChildrenValues);
       }
 
       connectedCallback() {
         super.connectedCallback();
         this._enhanceLightDomClasses();
         this._enhanceLightDomA11y();
+        // if (this._isChoiceGroup) {
+        //   this.removeEventListener('model-value-changed', this.__repropagateChildrenValues);
+        //   this.addEventListener('checked-changed', this.__repropagateChildrenValues);
+        // }
       }
 
       _enhanceLightDomClasses() {
@@ -552,6 +557,33 @@ export const FormControlMixin = dedupeMixin(
 
       __getDirectSlotChild(slotName) {
         return [...this.children].find(el => el.slot === slotName);
+      }
+
+      __repropagateChildrenValues(ev) {
+        if (ev.target === this) {
+          return;
+        }
+
+        console.log(
+          'hmm',
+          this.localName,
+          this._isChoiceGroup,
+          !this.multipleChoice,
+          !ev.target.checked,
+        );
+        if (this._isChoiceGroup && !this.multipleChoice && !ev.target.checked) {
+          console.log('h', ev.target.checked);
+          // We only send the checked changed up (not the unchecked)
+          ev.stopPropagation();
+          return;
+        }
+        ev.stopImmediatePropagation();
+
+        const formPath = [...((ev.detail && ev.detail.formPath) || [ev.target]), this];
+        // Since for a11y everything needs to be in lightdom, we don't add 'composed:true'
+        this.dispatchEvent(
+          new CustomEvent('model-value-changed', { bubbles: true, detail: { formPath } }),
+        );
       }
     },
 );
