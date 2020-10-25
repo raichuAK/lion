@@ -1,6 +1,6 @@
 import { IsDate } from '@lion/form-core';
 import { LionInput } from '@lion/input';
-import { formatDate, LocalizeMixin, parseDate } from '@lion/localize';
+import { formatDate, LocalizeMixin, parseDate, localize, getDateMask } from '@lion/localize';
 
 /**
  * @param {Date|number} date
@@ -70,5 +70,9 @@ export class LionInputDate extends LocalizeMixin(LionInput) {
   // eslint-disable-next-line class-methods-use-this
   deserializer(serializedValue) {
     return new Date(serializedValue);
+  }
+
+  async _getMessageMeta(){
+    return { datemask: getDateMask(localize.locale)};
   }
 }

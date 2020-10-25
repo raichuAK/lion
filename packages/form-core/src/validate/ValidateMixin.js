@@ -538,6 +538,7 @@ export const ValidateMixinImplementation = superclass =>
             modelValue: this.modelValue,
             formControl: this,
             fieldName,
+            meta
           });
           return { message, type: validator.type, validator };
         }),
@@ -652,6 +653,11 @@ export const ValidateMixinImplementation = superclass =>
         .sort((a, b) => types.indexOf(a.type) - types.indexOf(b.type));
       return res.slice(0, this._visibleMessagesAmount);
     }
+
+    async _getMessageMeta() {
+      return {};
+    }
   };
+  
 
 export const ValidateMixin = dedupeMixin(ValidateMixinImplementation);
